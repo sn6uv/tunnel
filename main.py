@@ -88,13 +88,25 @@ class LedTunnel:
         else:
           x.off()
 
+  def swirl(self):
+    i = 0
+    while True:
+      rate(5)
+      row_index = i % len(self.rows())
+      row_pos = (i // len(self.rows())) % 10
+      if row_index == row_pos == 0:
+        c = random_color()
+      self.rows()[row_index].leds[row_pos].color(c)
+      i += 1
+
 
 def main():
   t = LedTunnel()
 
-  # linear_gradients()
-  t.cyan_pulses()
-  # disco_party()
+  # t.linear_gradients()
+  # t.cyan_pulses()
+  # t.disco_party()
+  t.swirl()
 
 
 if __name__ == '__main__':
