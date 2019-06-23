@@ -1,8 +1,10 @@
 from vpython import *
+import random
 
 
 class Led:
   '''A single LED'''
+
   def __init__(self, x, y, z):
     self.sphere = sphere(pos=vector(x, y, z), radius=0.1)
 
@@ -13,6 +15,7 @@ class Led:
 
 class LedRow:
   '''A row of LEDs'''
+
   def __init__(self, x, y):
     self.leds = []
     for z in range(0, 10):
@@ -31,7 +34,49 @@ class LedRow:
       k = max(0, 1 - abs(i-index)/r)
       c = base_color + k * (pulse_color-base_color)
       led.color(c)
-    
+
+  def off(self):
+    for led in self.leds:
+      led.color(color.black)
+
+
+def random_color():
+  c = color.white
+  c.x = random.random()
+  c.y = random.random()
+  c.z = random.random()
+  return c
+
+
+def linear_gradients(a, b, c, d, e):
+  a.grad(color.yellow, color.red)
+  b.grad(color.blue, color.purple)
+  c.grad(color.green, color.yellow)
+  d.grad(color.purple, color.cyan)
+  e.grad(color.orange, color.magenta)
+
+
+def cyan_pulses(a, b, c, d, e):
+  for i in range(0, 1000):
+    rate(50)
+    a.pulse((0+i/10) % 10, color.black, color.cyan)
+    b.pulse((6+i/10) % 10, color.black, color.cyan)
+    c.pulse((2+i/10) % 10, color.black, color.cyan)
+    d.pulse((8+i/10) % 10, color.black, color.cyan)
+    e.pulse((4+i/10) % 10, color.black, color.cyan)
+
+
+def disco_party(a, b, c, d, e):
+  for _ in range(0, 1000):
+    rate(5)
+    i = random.randint(0, 4)
+    for j, x in enumerate((a, b, c, d, e)):
+      if i == j:
+        k = random.random() * 15 - 2.5
+        x.pulse(k, color.black, random_color())
+      else:
+        x.off()
+
 
 def main():
   a = LedRow(-0.866, -0.5)
@@ -40,21 +85,8 @@ def main():
   d = LedRow(0.866, 0.5)
   e = LedRow(0.866, -0.5)
 
-  # a.grad(color.yellow, color.red)
-  # b.grad(color.blue, color.purple)
-  # c.grad(color.green, color.yellow)
-  # d.grad(color.purple, color.cyan)
-  # e.grad(color.orange, color.magenta)
-
-  for i in range(0, 1000):
-    rate(50)
-    a.pulse((0+i/10)%10, color.black, color.cyan)
-    b.pulse((6+i/10)%10, color.black, color.cyan)
-    c.pulse((2+i/10)%10, color.black, color.cyan)
-    d.pulse((8+i/10)%10, color.black, color.cyan)
-    e.pulse((4+i/10)%10, color.black, color.cyan)
-
+  disco_party(a, b, c, d, e)
 
 
 if __name__ == '__main__':
-  main()
+    main()
