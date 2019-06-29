@@ -77,22 +77,24 @@ void setup() {
 
 int step = 0;
 void loop() {
-  uint8_t r, g, b, w;
   step = step % NUM_STEPS;
   for (int strip = 0; strip < NUMSTRIPS; ++strip) {
-    for (int led = 0; led < NUMPIXELS; ++led) {
-      const int idx = step - led;
-      r = 0;
-      g = 0;
-      b = 0;
-      w = 0;
-      if (idx < SIGNAL_LENGTH && idx > 0) {
-        r = r_arr[idx];
-        g = g_arr[idx];
-        b = b_arr[idx];
-        w = w_arr[idx];
+    if (step == 0) {
+      // Turn off all pixels. This is either the first cycle or the signal is
+      // wrapping around for another iteration.
+      for (int led = 0; led < NUMPIXELS; ++led) {
+        pixels[strip].setPixelColor(led, 0, 0, 0, 0);
       }
-      pixels[strip].setPixelColor(led, r, g, b, w);
+      continue;
+    }
+
+    // Turn off last pixel from previous step.
+    pixels[strip].setPixelColor(step-1, 0, 0, 0, 0);
+
+    // Set lit pixels.
+    for (int idx = 0; idx < SIGNAL_LENGTH; ++idx) {
+      const int led = step + idx;
+      pixels[strip].setPixelColor(led, r_arr[idx], g_arr[idx], b_arr[idx], w_arr[idx]);
     }
   }
   for (int i = 0; i < NUMSTRIPS; ++i) {
